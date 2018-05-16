@@ -2,16 +2,17 @@ package main
 
 import (
 	"fmt"
-	"os"
 
 	log "github.com/Sirupsen/logrus"
+	metav1 "k8s.io/apimachinery/pkg/apis/meta/v1"
 	"k8s.io/client-go/kubernetes"
 	"k8s.io/client-go/tools/clientcmd"
 )
 
 func getKubernetesClient() kubernetes.Interface {
 	// construct the path to resolve to `~/.kube/config`
-	kubeConfigPath := os.Getenv("HOME") + "/.kube/config"
+	// kubeConfigPath := os.Getenv("HOME") + "/.kube/config"
+	kubeConfigPath := "/etc/kubernetes/kubectl.kubeconfig"
 
 	// create the config from the path
 	config, err := clientcmd.BuildConfigFromFlags("", kubeConfigPath)

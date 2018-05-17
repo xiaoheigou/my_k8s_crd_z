@@ -15,7 +15,7 @@ import (
 	"k8s.io/client-go/util/workqueue"
 )
 
-func getKubernetesClient() (kubernetes.Interface, myresourceclientset.Interface) {
+func getKubernetesClient() (kubernetes.Interface, *myresourceclientset.Clientset) {
 	// construct the path to resolve to `~/.kube/config`
 	// kubeConfigPath := os.Getenv("HOME") + "/.kube/config"
 	kubeConfigPath := "/etc/kubernetes/kubectl.kubeconfig"
@@ -93,11 +93,12 @@ func main() {
 
 	// ## 2.controller
 	controller := Controller{
-		logger:    log.NewEntry(log.New()),
-		clientset: client,
-		informer:  informer,
-		queue:     queue,
-		handler:   &TestHandler{},
+		logger:           log.NewEntry(log.New()),
+		clientset:        client,
+		myresourceClient: myresourceClient,
+		informer:         informer,
+		queue:            queue,
+		handler:          &TestHandler{},
 	}
 	// use a channel to synchronize the finalization for a graceful shutdown
 	stopCh := make(chan struct{})

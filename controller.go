@@ -5,6 +5,7 @@ import (
 	"time"
 
 	log "github.com/Sirupsen/logrus"
+	myresourceclientset "github.com/xiaoheigou/mycrd/pkg/client/clientset/versioned"
 	utilruntime "k8s.io/apimachinery/pkg/util/runtime"
 	"k8s.io/apimachinery/pkg/util/wait"
 	"k8s.io/client-go/kubernetes"
@@ -13,11 +14,12 @@ import (
 )
 
 type Controller struct {
-	logger    *log.Entry
-	clientset kubernetes.Interface
-	queue     workqueue.RateLimitingInterface
-	informer  cache.SharedIndexInformer
-	handler   Handler
+	logger           *log.Entry
+	clientset        kubernetes.Interface
+	myresourceClient *myresourceclientset.Clientset
+	queue            workqueue.RateLimitingInterface
+	informer         cache.SharedIndexInformer
+	handler          Handler
 }
 
 func (c *Controller) Run(stopCh <-chan struct{}) {
@@ -110,8 +112,8 @@ func (c *Controller) processNextItem() bool {
 		c.handler.ObjectDeleted(item)
 		c.queue.Forget(key)
 	} else {
-		c.logger.Infof("Controller.processNextItem: object created detected: %s[resource number:pod:]", keyRaw)
-		c.handler.ObjectCreated(item)
+		c.logger.Infof("Controller.processNextItem: object created detected: %s", keyRaw)
+		c.handler.ObjectCreated(item, c.clientset, c.myresourceClient)
 		c.queue.Forget(key)
 	}
 

@@ -22,7 +22,8 @@ type MyResource struct {
 	meta_v1.ObjectMeta `json:"metadata,omitempty"`
 
 	// Spec is the custom resource spec
-	Spec MyResourceSpec `json:"spec"`
+	Spec   MyResourceSpec   `json:"spec"`
+	Status MyResourceStatus `json:"status,omitempty"`
 }
 
 // MyResourceSpec is the spec for a MyResource resource
@@ -42,4 +43,9 @@ type MyResourceList struct {
 	meta_v1.ListMeta `json:"metadata"`
 
 	Items []MyResource `json:"items"`
+}
+
+// MyResourceStatus is a map of resource number
+type MyResourceStatus struct {
+	ResourceNumber map[string]int
 }
